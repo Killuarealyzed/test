@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L1rtus Company — Профессиональные решения для учебы и бизнеса</title>
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans@5.0.0/cyrillic-400.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans@5.0.0/cyrillic-700.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans@5.0.0/cyrillic-900.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        blood: '#8B0000',
+                        dark: '#0a0a0a',
+                        mist: '#1a1a2e',
+                        petal: '#c41e3a',
+                        ash: '#2d2d3f',
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Noto Sans', sans-serif; background: #0a0a0a; color: #e0e0e0; overflow-x: hidden; }
+
+        ::selection { background: rgba(196,30,58,.5); color: #fff; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #2d2d3f; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #c41e3a; }
+
+        .fade-in { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        .petal {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(ellipse, #c41e3a, #8B0000);
+            border-radius: 50% 0 50% 0;
+            opacity: 0.6;
+            animation: fall linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg) translateX(0); opacity: 0.7; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(110vh) rotate(720deg) translateX(100px); opacity: 0; }
+        }
+
+        .hero-gradient { background: linear-gradient(180deg, rgba(10,10,10,.25) 0%, rgba(10,10,10,.55) 50%, #0a0a0a 100%); }
+        .text-glow { text-shadow: 0 0 40px rgba(196, 30, 58, 0.5), 0 0 80px rgba(139, 0, 0, 0.3); }
+        .card-hover { transition: all 0.4s ease; }
+        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 60px rgba(196, 30, 58, 0.15); }
+        .line-accent { width: 60px; height: 3px; background: linear-gradient(90deg, #c41e3a, transparent); }
+        .nav-blur { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .quote-mark { font-size: 6rem; line-height: 1; color: #c41e3a; opacity: 0.3; font-family: Georgia, serif; }
+        .scroll-indicator { animation: bounce 2s ease infinite; }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-15px); }
+            60% { transform: translateY(-7px); }
+        }
+        .img-overlay { position: relative; overflow: hidden; }
+        .img-overlay::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(139,0,0,0.25), transparent 60%);
+            pointer-events: none;
+        }
+        .latin-tag { font-size: 1.3rem; color: #c41e3a; letter-spacing: 0.35em; }
+        .section-divider { height: 1px; background: linear-gradient(90deg, transparent, #c41e3a, transparent); opacity: 0.3; }
+
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
+        .faq-item.open .faq-answer { max-height: 300px; }
+        .faq-item .faq-chevron { transition: transform 0.4s ease; }
+        .faq-item.open .faq-chevron { transform: rotate(45deg); }
+
+        /* Switch (срочное выполнение) */
+        .switch { position: relative; display: inline-block; width: 46px; height: 26px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .switch .slider { position: absolute; cursor: pointer; inset: 0; background: #2d2d3f; border-radius: 26px; transition: .3s; }
+        .switch .slider::before {
+            content: ''; position: absolute; height: 18px; width: 18px; left: 4px; top: 4px;
+            background: #e0e0e0; border-radius: 50%; transition: .3s;
+        }
+        .switch input:checked + .slider { background: #c41e3a; }
+        .switch input:checked + .slider::before { transform: translateX(20px); background: #fff; }
+
+        /* Option checkboxes в модалке */
+        .opt-row { transition: all .3s ease; cursor: pointer; }
+        .opt-row.selected { border-color: rgba(196,30,58,.5); background: rgba(196,30,58,.07); }
+        .opt-row.base-row { border-color: rgba(196,30,58,.6); background: rgba(196,30,58,.08); }
+        .opt-check {
+            width: 22px; height: 22px; flex-shrink: 0;
+            border: 2px solid #4a4a5e; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all .25s ease; margin-top: 2px;
+        }
+        .opt-check::after {
+            content: ''; display: none; width: 5px; height: 10px;
+            border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
+        }
+        .opt-row.selected .opt-check, .opt-row.base-row .opt-check { background: #c41e3a; border-color: #c41e3a; }
+        .opt-row.selected .opt-check::after, .opt-row.base-row .opt-check::after { display: block; }
+
+        /* Modal */
+        #order-modal { display: none; }
+        #order-modal.open { display: flex; }
+        #order-modal .modal-panel { animation: modalIn .35s ease; }
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(30px) scale(.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .modal-scroll::-webkit-scrollbar { width: 6px; }
+
+        /* Toast */
+        #toast {
+            position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%) translateY(120px);
+            z-index: 100; transition: transform .5s ease, opacity .5s ease; opacity: 0;
+        }
+        #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        @media (max-width: 768px) {
+            .latin-tag { font-size: 1rem; }
+            .quote-mark { font-size: 4rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Falling Petals Container -->
+    <div id="petals-container" class="fixed inset-0 pointer-events-none z-50"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-40 transition-all duration-500">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="#hero" class="text-petal font-black text-xl tracking-widest">L1RTUS</a>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#services" class="text-sm tracking-widest uppercase text-gray-400 hover:text-petal transition-colors">Услуги</a>
+                <a href="#why" class="text-sm tracking-widest uppercase text-gray-400 hover:text-petal transition-colors">Почему мы</a>
+                <a href="#how" class="text-sm tracking-widest uppercase text-gray-400 hover:text-petal transition-colors">Как это работает</a>
+                <a href="#faq" class="text-sm tracking-widest uppercase text-gray-400 hover:text-petal transition-colors">Вопросы</a>
+                <a href="#contact" class="text-sm tracking-widest uppercase text-gray-400 hover:text-petal transition-colors">Контакты</a>
+            </div>
+            <button id="mobile-menu-btn" class="md:hidden text-gray-400 hover:text-petal transition-colors" aria-label="Меню">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden nav-blur bg-dark/90 border-t border-ash">
+            <div class="px-6 py-4 flex flex-col gap-4">
+                <a href="#services" class="text-sm tracking-widest uppercase text-gray-400 hover:text-petal transition-colors">Услуги</a>
+                <a href="#why" class="text-sm tracking-widest uppercase text-gray-400 hover:text-petal transition-colors">Почему мы</a>
+                <a href="#how" class="text-sm tracking-widest uppercase text-gray-400 hover:text-petal transition-colors">Как это работает</a>
+                <a href="#faq" class="text-sm tracking-widest uppercase text-gray-400 hover:text-petal transition-colors">Вопросы</a>
+                <a href="#contact" class="text-sm tracking-widest uppercase text-gray-400 hover:text-petal transition-colors">Контакты</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center">
+        <div class="absolute inset-0">
+            <img src="https://image.qwenlm.ai/public_source/dd535833-935d-4ab7-bdc6-37ff8e56026b/179a78668-01b8-438b-ae34-6fffff9ea17a.png" alt="" class="w-full h-full object-cover opacity-60">
+            <div class="hero-gradient absolute inset-0"></div>
+        </div>
+
+        <div class="relative z-10 text-center px-6 max-w-4xl mx-auto pt-24 pb-16">
+            <p class="text-petal tracking-[0.3em] uppercase text-sm mb-6 fade-in">Работаем с 2025 года · точно в срок</p>
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white text-glow mb-4 fade-in leading-tight">
+                L1RTUS<br>COMPANY
+            </h1>
+            <p class="latin-tag mb-6 fade-in uppercase">Study &amp; Business Solutions</p>
+            <p class="text-gray-300 text-lg md:text-xl mb-2 fade-in">Профессиональные решения для учебы и бизнеса</p>
+            <p class="text-petal text-sm tracking-widest uppercase mb-12 fade-in">Берём рутину на себя — вы сосредотачиваетесь на главном</p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 fade-in">
+                <a href="#services" class="px-8 py-3 bg-petal text-white rounded-full text-sm tracking-widest uppercase hover:bg-blood transition-all duration-300 hover:scale-105 shadow-lg shadow-petal/20">
+                    Выбрать услугу
+                </a>
+                <a href="#how" class="px-8 py-3 border border-gray-600 text-gray-400 rounded-full text-sm tracking-widest uppercase hover:border-petal hover:text-petal transition-all duration-300">
+                    Как это работает
+                </a>
+            </div>
+        </div>
+
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator">
+            <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Stats Strip -->
+    <section class="py-10 px-6 border-y border-ash/30 bg-mist/20">
+        <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div class="fade-in">
+                <p class="text-3xl font-black text-petal mb-1">2025</p>
+                <p class="text-gray-500 text-xs tracking-widest uppercase">год основания</p>
+            </div>
+            <div class="fade-in">
+                <p class="text-3xl font-black text-petal mb-1">24/7</p>
+                <p class="text-gray-500 text-xs tracking-widest uppercase">оперативная поддержка</p>
+            </div>
+            <div class="fade-in">
+                <p class="text-3xl font-black text-petal mb-1">7 дней</p>
+                <p class="text-gray-500 text-xs tracking-widest uppercase">бесплатные правки</p>
+            </div>
+            <div class="fade-in">
+                <p class="text-3xl font-black text-petal mb-1">100%</p>
+                <p class="text-gray-500 text-xs tracking-widest uppercase">конфиденциально</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 md:py-32 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+                <div class="fade-in">
+                    <div class="line-accent mb-6"></div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">О компании</h2>
+                    <p class="text-gray-400 leading-relaxed mb-6 text-lg">
+                        <span class="text-petal font-semibold">L1rtus Company</span> — профессиональные решения для учебы и бизнеса. Мы берем на себя рутину, чтобы вы сосредоточились на главном.
+                    </p>
+                    <p class="text-gray-500 leading-relaxed">
+                        Дипломные работы и Telegram-боты, веб-сайты и индивидуальные проекты под ключ. Каждая работа проходит тщательную проверку и сдаётся точно в срок.
+                    </p>
+                </div>
+                <div class="fade-in">
+                    <div class="img-overlay rounded-2xl overflow-hidden">
+                        <img src="https://image.qwenlm.ai/public_source/dd535833-935d-4ab7-bdc6-37ff8e56026b/12a94e433-672f-461f-9be2-21fbf226804d.png" alt="Рабочее место L1rtus Company" class="w-full h-96 object-cover rounded-2xl">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider max-w-4xl mx-auto"></div>
+
+    <!-- Services Section -->
+    <section id="services" class="py-24 md:py-32 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16 fade-in">
+                <div class="line-accent mx-auto mb-6"></div>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Выберите услугу</h2>
+                <p class="text-gray-500 max-w-2xl mx-auto">Четыре направления. Соберите свой пакет в конфигураторе — цена и срок посчитаются автоматически.</p>
+            </div>
+
+            <div id="services-grid" class="grid sm:grid-cols-2 gap-8"></div>
+        </div>
+    </section>
+
+    <div class="section-divider max-w-4xl mx-auto"></div>
+
+    <!-- Why Us Section -->
+    <section id="why" class="py-24 md:py-32 px-6 bg-mist/30">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16 fade-in">
+                <div class="line-accent mx-auto mb-6"></div>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Почему мы</h2>
+                <p class="text-gray-500 max-w-2xl mx-auto">Четыре причины доверить работу именно нам</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="card-hover bg-ash/20 rounded-2xl p-8 border border-ash/50 fade-in text-center">
+                    <div class="text-4xl mb-4">⏰</div>
+                    <h4 class="text-white font-bold mb-2">Точно в срок</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed">Работаем с 2025 года без срывов. Дедлайн — это закон.</p>
+                </div>
+                <div class="card-hover bg-ash/20 rounded-2xl p-8 border border-ash/50 fade-in text-center">
+                    <div class="text-4xl mb-4">🔒</div>
+                    <h4 class="text-white font-bold mb-2">Конфиденциально</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed">Ваши данные под защитой. Никому и никогда не раскрываем.</p>
+                </div>
+                <div class="card-hover bg-ash/20 rounded-2xl p-8 border border-ash/50 fade-in text-center">
+                    <div class="text-4xl mb-4">✏️</div>
+                    <h4 class="text-white font-bold mb-2">Бесплатные правки</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed">7 дней после сдачи работы вносим корректировки бесплатно.</p>
+                </div>
+                <div class="card-hover bg-ash/20 rounded-2xl p-8 border border-ash/50 fade-in text-center">
+                    <div class="text-4xl mb-4">💬</div>
+                    <h4 class="text-white font-bold mb-2">Всегда на связи</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed">Оперативная поддержка 24/7. Ответим в любое время.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works — Timeline -->
+    <section id="how" class="py-24 md:py-32 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16 fade-in">
+                <div class="line-accent mx-auto mb-6"></div>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Как это работает</h2>
+                <p class="text-gray-500 max-w-2xl mx-auto">Четыре шага от заявки до готовой работы</p>
+            </div>
+
+            <div class="relative">
+                <div class="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-petal via-ash to-transparent"></div>
+
+                <div class="relative mb-16 fade-in">
+                    <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+                        <div class="md:text-right pl-12 md:pl-0 md:pr-12">
+                            <div class="inline-flex items-center gap-2 mb-3">
+                                <span class="w-3 h-3 bg-petal rounded-full"></span>
+                                <span class="text-petal text-sm tracking-widest uppercase">Шаг 01</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-3">Выбор услуги</h3>
+                            <p class="text-gray-400 leading-relaxed">Выберите направление и соберите нужный пакет опций в конфигураторе.</p>
+                        </div>
+                        <div class="hidden md:block"></div>
+                    </div>
+                </div>
+
+                <div class="relative mb-16 fade-in">
+                    <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+                        <div class="hidden md:block"></div>
+                        <div class="pl-12">
+                            <div class="inline-flex items-center gap-2 mb-3">
+                                <span class="w-3 h-3 bg-petal rounded-full"></span>
+                                <span class="text-petal text-sm tracking-widest uppercase">Шаг 02</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-3">Заявка в TG</h3>
+                            <p class="text-gray-400 leading-relaxed">Отправьте заявку через Telegram одним нажатием — сообщение с деталями уже сформировано за вас.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative mb-16 fade-in">
+                    <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+                        <div class="md:text-right pl-12 md:pl-0 md:pr-12">
+                            <div class="inline-flex items-center gap-2 mb-3">
+                                <span class="w-3 h-3 bg-petal rounded-full"></span>
+                                <span class="text-petal text-sm tracking-widest uppercase">Шаг 03</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-3">Уточнение</h3>
+                            <p class="text-gray-400 leading-relaxed">Обсудим детали и сроки выполнения, зафиксируем стоимость и требования к работе.</p>
+                        </div>
+                        <div class="hidden md:block"></div>
+                    </div>
+                </div>
+
+                <div class="relative fade-in">
+                    <div class="md:grid md:grid-cols-2 md:gap-12 items-center">
+                        <div class="hidden md:block"></div>
+                        <div class="pl-12">
+                            <div class="inline-flex items-center gap-2 mb-3">
+                                <span class="w-3 h-3 bg-blood rounded-full animate-pulse"></span>
+                                <span class="text-blood text-sm tracking-widest uppercase">Шаг 04</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-3">Результат</h3>
+                            <p class="text-gray-400 leading-relaxed">Получите готовую работу в срок. Каждая работа проходит тщательную проверку перед сдачей.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quote Section -->
+    <section class="py-24 md:py-32 px-6 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-dark via-mist to-dark opacity-60"></div>
+        <div class="max-w-4xl mx-auto relative z-10 text-center fade-in">
+            <span class="quote-mark">"</span>
+            <blockquote class="text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-relaxed mb-8">
+                Мы берем на себя рутину,<br>чтобы вы сосредоточились на главном.
+            </blockquote>
+            <p class="latin-tag mb-4 uppercase">Focus on what matters</p>
+            <p class="text-gray-500 text-sm tracking-widest uppercase">— Каждая работа проходит тщательную проверку и сдаётся точно в срок</p>
+        </div>
+    </section>
+
+    <div class="section-divider max-w-4xl mx-auto"></div>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-24 md:py-32 px-6">
+        <div class="max-w-3xl mx-auto">
+            <div class="text-center mb-16 fade-in">
+                <div class="line-accent mx-auto mb-6"></div>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Частые вопросы</h2>
+                <p class="text-gray-500">Всё, что нужно знать перед заказом</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="faq-item bg-ash/20 rounded-xl border border-ash/50 overflow-hidden fade-in">
+                    <button class="faq-toggle w-full flex items-center justify-between px-6 py-5 text-left">
+                        <span class="text-white font-bold pr-4">Как оформить заказ?</span>
+                        <span class="faq-chevron text-petal text-2xl leading-none">+</span>
+                    </button>
+                    <div class="faq-answer px-6">
+                        <p class="text-gray-400 text-sm leading-relaxed pb-5">Выберите услугу, отметьте нужные опции в конфигураторе и нажмите «Заказать в Telegram» — готовая заявка скопируется, останется вставить её в чат.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item bg-ash/20 rounded-xl border border-ash/50 overflow-hidden fade-in">
+                    <button class="faq-toggle w-full flex items-center justify-between px-6 py-5 text-left">
+                        <span class="text-white font-bold pr-4">Сколько стоит работа?</span>
+                        <span class="faq-chevron text-petal text-2xl leading-none">+</span>
+                    </button>
+                    <div class="faq-answer px-6">
+                        <p class="text-gray-400 text-sm leading-relaxed pb-5">Цена складывается из базовой разработки и выбранных опций. Срочное выполнение — +50% к стоимости.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item bg-ash/20 rounded-xl border border-ash/50 overflow-hidden fade-in">
+                    <button class="faq-toggle w-full flex items-center justify-between px-6 py-5 text-left">
+                        <span class="text-white font-bold pr-4">Какие сроки выполнения?</span>
+                        <span class="faq-chevron text-petal text-2xl leading-none">+</span>
+                    </button>
+                    <div class="faq-answer px-6">
+                        <p class="text-gray-400 text-sm leading-relaxed pb-5">Индивидуальные проекты — 3-5 дней, Telegram-боты — 5-7 дней, дипломные работы — 7-10 дней, веб-сайты — 7-14 дней. Срочное выполнение — быстрее.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item bg-ash/20 rounded-xl border border-ash/50 overflow-hidden fade-in">
+                    <button class="faq-toggle w-full flex items-center justify-between px-6 py-5 text-left">
+                        <span class="text-white font-bold pr-4">Есть ли гарантии?</span>
+                        <span class="faq-chevron text-petal text-2xl leading-none">+</span>
+                    </button>
+                    <div class="faq-answer px-6">
+                        <p class="text-gray-400 text-sm leading-relaxed pb-5">Да. В течение 7 дней после сдачи вносим правки бесплатно. Если работа не соответствует согласованным требованиям — исправляем за свой счёт.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item bg-ash/20 rounded-xl border border-ash/50 overflow-hidden fade-in">
+                    <button class="faq-toggle w-full flex items-center justify-between px-6 py-5 text-left">
+                        <span class="text-white font-bold pr-4">Это конфиденциально?</span>
+                        <span class="faq-chevron text-petal text-2xl leading-none">+</span>
+                    </button>
+                    <div class="faq-answer px-6">
+                        <p class="text-gray-400 text-sm leading-relaxed pb-5">Абсолютно. Ваши данные под защитой: мы не раскрываем информацию о клиентах и заказах третьим лицам.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item bg-ash/20 rounded-xl border border-ash/50 overflow-hidden fade-in">
+                    <button class="faq-toggle w-full flex items-center justify-between px-6 py-5 text-left">
+                        <span class="text-white font-bold pr-4">Как происходит оплата?</span>
+                        <span class="faq-chevron text-petal text-2xl leading-none">+</span>
+                    </button>
+                    <div class="faq-answer px-6">
+                        <p class="text-gray-400 text-sm leading-relaxed pb-5">После уточнения деталей — любым удобным способом. Условия и этапы оплаты обсуждаются в Telegram до начала работы.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section id="contact" class="py-24 md:py-32 px-6 relative">
+        <div class="absolute inset-0">
+            <img src="https://image.qwenlm.ai/public_source/dd535833-935d-4ab7-bdc6-37ff8e56026b/15ef3c62b-7750-4a22-bc5c-7b7e8c868d80.png" alt="" class="w-full h-full object-cover opacity-20">
+            <div class="absolute inset-0 bg-dark/80"></div>
+        </div>
+        <div class="max-w-3xl mx-auto text-center relative z-10 fade-in">
+            <p class="text-petal tracking-[0.3em] uppercase text-sm mb-6">Готовы избавиться от рутины?</p>
+            <h2 class="text-3xl md:text-5xl font-bold text-white text-glow mb-6">Закажите работу сегодня</h2>
+            <p class="text-gray-400 text-lg mb-10 leading-relaxed">
+                Напишите нам в Telegram — обсудим детали, зафиксируем цену и срок. Поддержка на связи 24/7.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="https://t.me/l1rtus_work" target="_blank" rel="noopener" class="px-10 py-4 bg-petal text-white rounded-full text-sm tracking-widest uppercase hover:bg-blood transition-all duration-300 hover:scale-105 shadow-lg shadow-petal/20">
+                    Написать в Telegram
+                </a>
+                <a href="mailto:l1rtuswork09@gmail.com" class="px-10 py-4 border border-gray-600 text-gray-400 rounded-full text-sm tracking-widest uppercase hover:border-petal hover:text-petal transition-all duration-300">
+                    l1rtuswork09@gmail.com
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-ash/30">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <p class="text-petal font-black text-xl tracking-widest mb-3">L1RTUS</p>
+                    <p class="text-gray-500 text-sm leading-relaxed">Профессиональные решения для учебы и бизнеса. Берём рутину на себя, чтобы вы сосредоточились на главном.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-3 text-sm tracking-widest uppercase">Навигация</h4>
+                    <div class="flex flex-col gap-2">
+                        <a href="#services" class="text-gray-500 text-sm hover:text-petal transition-colors">Услуги</a>
+                        <a href="#why" class="text-gray-500 text-sm hover:text-petal transition-colors">Почему мы</a>
+                        <a href="#how" class="text-gray-500 text-sm hover:text-petal transition-colors">Как это работает</a>
+                        <a href="#faq" class="text-gray-500 text-sm hover:text-petal transition-colors">Частые вопросы</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-3 text-sm tracking-widest uppercase">Контакты</h4>
+                    <div class="flex flex-col gap-2">
+                        <a href="mailto:l1rtuswork09@gmail.com" class="text-gray-500 text-sm hover:text-petal transition-colors">l1rtuswork09@gmail.com</a>
+                        <a href="https://t.me/l1rtus_work" target="_blank" rel="noopener" class="text-gray-500 text-sm hover:text-petal transition-colors">Telegram - @L1rtus_work</a>
+                        <p class="text-gray-500 text-sm">Поддержка 24/7</p>
+                    </div>
+                </div>
+            </div>
+            <div class="section-divider mb-6"></div>
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <p class="text-gray-600 text-xs">© 2025 L1rtus Company. Все права защищены.</p>
+                <p class="text-gray-600 text-xs">Точно в срок · Конфиденциально · Бесплатные правки</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Order Modal (конфигуратор) -->
+    <div id="order-modal" class="fixed inset-0 z-[60] items-center justify-center px-4 md:px-6">
+        <div id="modal-backdrop" class="absolute inset-0 bg-dark/80 nav-blur"></div>
+        <div class="modal-panel modal-scroll relative bg-mist border border-ash rounded-2xl max-w-lg w-full shadow-2xl shadow-petal/10 max-h-[88vh] overflow-y-auto">
+            <div class="sticky top-0 bg-mist/95 nav-blur border-b border-ash/50 px-6 md:px-8 py-5 flex items-center justify-between z-10">
+                <h3 id="modal-title" class="text-xl md:text-2xl font-bold text-white">Название услуги</h3>
+                <button id="modal-close" class="text-gray-500 hover:text-petal text-2xl leading-none transition-colors" aria-label="Закрыть">×</button>
+            </div>
+
+            <div class="px-6 md:px-8 py-6">
+                <!-- Срочное выполнение -->
+                <label class="flex items-center justify-between border border-petal/40 bg-petal/5 rounded-xl px-5 py-4 mb-6 cursor-pointer select-none">
+                    <span class="flex items-center gap-3 text-gray-200 text-sm font-bold">
+                        <span class="switch">
+                            <input type="checkbox" id="urgent-toggle">
+                            <span class="slider"></span>
+                        </span>
+                        Срочное выполнение
+                    </span>
+                    <span class="px-3 py-1 bg-petal text-white text-xs font-black rounded-full">+50%</span>
+                </label>
+
+                <!-- Опции -->
+                <div id="options-list" class="space-y-3 mb-6"></div>
+
+                <!-- Итого -->
+                <div class="bg-ash/20 border border-ash/50 rounded-xl p-6 text-center mb-6">
+                    <p id="modal-total" class="text-3xl md:text-4xl font-black text-petal mb-2">0 ₽</p>
+                    <p id="modal-days" class="text-gray-400 text-sm">⏱ Примерный срок: 0 дней</p>
+                </div>
+
+                <!-- Комментарий -->
+                <textarea id="order-comment" rows="3" placeholder="Ваш комментарий (необязательно)"
+                    class="w-full bg-dark/60 border border-ash rounded-xl px-5 py-4 text-sm text-gray-300 placeholder-gray-600 focus:border-petal outline-none resize-y mb-6"></textarea>
+
+                <button id="modal-order" class="w-full px-8 py-4 bg-petal text-white rounded-full text-sm tracking-widest uppercase hover:bg-blood transition-all duration-300 hover:scale-[1.02] shadow-lg shadow-petal/20">
+                    Заказать в Telegram
+                </button>
+                <p class="text-gray-600 text-xs text-center mt-4">Заявка скопируется — просто вставьте её в чат Telegram</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="bg-mist border border-petal/50 text-gray-200 text-sm px-6 py-3 rounded-full shadow-lg shadow-petal/20">
+        ✓ Заявка скопирована — вставьте её в Telegram
+    </div>
+
+    <script>
+        /* ============ DATA ============ */
+        // Замените ссылку на ваш Telegram: https://t.me/ВАШ_НИК
+        const TG_LINK = 'https://t.me/l1rtus_work';
+
+        const SERVICES = [
+            {
+                icon: '🎓',
+                name: 'Дипломные работы',
+                desc: 'Полное сопровождение дипломного проекта от структуры до защиты',
+                days: [7, 10],
+                // Сумма всех опций (без срочности) = 10 000 ₽
+                options: [
+                    { title: 'Базовая разработка', desc: 'Структура, оформление, базовый текст', price: 5000, base: true },
+                    { title: 'Продукт', desc: 'Готовый файл работы в Word/PDF', price: 1000 },
+                    { title: 'Текст работы', desc: 'Полное написание всех глав', price: 2000 },
+                    { title: 'Презентация + речь', desc: '15-20 слайдов + текст выступления', price: 1000 },
+                    { title: 'Антиплагиат', desc: 'Проверка и повышение до 80%+', price: 1000 }
+                ]
+            },
+            {
+                icon: '🤖',
+                name: 'Telegram-боты',
+                desc: 'Разработка функциональных ботов для бизнеса и личных целей',
+                days: [5, 7],
+                // Сумма всех опций (без срочности) = 9 000 ₽
+                options: [
+                    { title: 'Базовая разработка', desc: 'Основная логика, команды, интерфейс', price: 3500, base: true },
+                    { title: 'База данных', desc: 'Интеграция PostgreSQL / MongoDB', price: 2000 },
+                    { title: 'Админ-панель', desc: 'Управление ботом, статистика, логи', price: 2000 },
+                    { title: 'Платежная система', desc: 'Подключение ЮKassa / Robokassa / Crypto', price: 1500 }
+                ]
+            },
+            {
+                icon: '🌐',
+                name: 'Веб-сайты',
+                desc: 'Создание современных и адаптивных веб-ресурсов',
+                days: [7, 14],
+                // Сумма всех опций (без срочности) = 12 000 ₽
+                options: [
+                    { title: 'Базовая разработка', desc: 'Структура и базовый функционал', price: 4000, base: true },
+                    { title: 'CMS система', desc: 'Управление контентом без программиста', price: 3500 },
+                    { title: 'SEO-оптимизация', desc: 'Мета-теги, скорость, структура для поиска', price: 2000 },
+                    { title: 'Адаптивный дизайн', desc: 'Идеальное отображение на мобильных', price: 2500 }
+                ]
+            },
+            {
+                icon: '💡',
+                name: 'Индивидуальные проекты',
+                desc: 'Реализация любых идей по вашему техническому заданию',
+                days: [3, 5],
+                options: [
+                    { title: 'Базовая разработка', desc: 'Реализация идеи по вашему ТЗ', price: 1000, base: true },
+                    { title: 'Продукт', desc: 'Готовый результат + исходный код', price: 350 },
+                    { title: 'Презентация + речь', desc: 'Демо + текст выступления', price: 200 },
+                    { title: 'Тезисы', desc: 'Краткое описание проекта для защиты', price: 150 }
+                ]
+            }
+        ];
+
+        /* ============ HELPERS ============ */
+        function formatRub(value) {
+            return value.toLocaleString('ru-RU') + ' ₽';
+        }
+
+        function daysLabel(range) {
+            return range[0] + '-' + range[1] + ' дней';
+        }
+
+        function urgentDays(range) {
+            const minU = Math.max(1, Math.ceil(range[0] / 2));
+            const maxU = Math.max(minU + 1, Math.ceil(range[1] / 2));
+            return [minU, maxU];
+        }
+
+        /* ============ RENDER SERVICES ============ */
+        const servicesGrid = document.getElementById('services-grid');
+        SERVICES.forEach(function(svc, idx) {
+            const basePrice = svc.options.find(function(o) { return o.base; }).price;
+            const card = document.createElement('div');
+            card.className = 'card-hover bg-ash/20 rounded-2xl p-8 border border-ash/50 fade-in flex flex-col';
+            card.innerHTML =
+                '<div class="w-14 h-14 bg-petal/10 rounded-xl flex items-center justify-center mb-6 text-2xl">' + svc.icon + '</div>' +
+                '<h3 class="text-xl font-bold text-white mb-3">' + svc.name + '</h3>' +
+                '<p class="text-gray-400 leading-relaxed text-sm mb-6 flex-1">' + svc.desc + '</p>' +
+                '<div class="h-px bg-ash/50 mb-5"></div>' +
+                '<div class="flex items-center justify-between mb-6">' +
+                    '<span class="text-petal font-black">от ' + formatRub(basePrice) + '</span>' +
+                    '<span class="text-gray-500 text-sm">⏱ ' + daysLabel(svc.days) + '</span>' +
+                '</div>' +
+                '<button class="order-btn w-full px-6 py-3 border border-petal/60 text-petal rounded-full text-xs tracking-widest uppercase hover:bg-petal hover:text-white transition-all duration-300" data-index="' + idx + '">Заказать</button>';
+            servicesGrid.appendChild(card);
+        });
+
+        /* ============ MODAL ============ */
+        const orderModal = document.getElementById('order-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalTotal = document.getElementById('modal-total');
+        const modalDays = document.getElementById('modal-days');
+        const optionsList = document.getElementById('options-list');
+        const urgentToggle = document.getElementById('urgent-toggle');
+        const commentBox = document.getElementById('order-comment');
+        let currentService = null;
+
+        function renderOptions() {
+            optionsList.innerHTML = '';
+            currentService.options.forEach(function(opt, optIdx) {
+                const row = document.createElement('label');
+                row.className = 'opt-row flex items-start gap-4 rounded-xl border border-ash/40 px-5 py-4 ' + (opt.base ? 'base-row' : '');
+                row.innerHTML =
+                    '<input type="checkbox" class="opt-input hidden" data-opt="' + optIdx + '"' + (opt.base ? ' checked disabled' : '') + '>' +
+                    '<span class="opt-check"></span>' +
+                    '<span class="flex-1">' +
+                        '<span class="flex items-center justify-between gap-3 flex-wrap">' +
+                            '<span class="text-white font-bold text-sm flex items-center gap-2">' + opt.title +
+                                (opt.base ? ' <span class="px-2 py-0.5 bg-petal text-white text-[10px] font-black tracking-widest rounded-full">БАЗА</span>' : '') +
+                            '</span>' +
+                            '<span class="text-petal font-black text-sm">+' + formatRub(opt.price) + '</span>' +
+                        '</span>' +
+                        '<span class="block text-gray-500 text-xs mt-1">' + opt.desc + '</span>' +
+                    '</span>';
+                optionsList.appendChild(row);
+            });
+            optionsList.querySelectorAll('.opt-input').forEach(function(inp) {
+                inp.addEventListener('change', refreshOptions);
+            });
+        }
+
+        function refreshOptions() {
+            optionsList.querySelectorAll('.opt-row').forEach(function(row) {
+                const inp = row.querySelector('.opt-input');
+                const isBase = inp.disabled;
+                row.classList.toggle('selected', inp.checked && !isBase);
+                row.classList.toggle('base-row', isBase);
+            });
+            updateTotal();
+        }
+
+        function calcTotal() {
+            let sum = 0;
+            optionsList.querySelectorAll('.opt-input').forEach(function(inp) {
+                if (inp.checked) {
+                    sum += currentService.options[parseInt(inp.dataset.opt, 10)].price;
+                }
+            });
+            if (urgentToggle.checked) sum = Math.round(sum * 1.5);
+            return sum;
+        }
+
+        function updateTotal() {
+            modalTotal.textContent = formatRub(calcTotal());
+            const range = urgentToggle.checked ? urgentDays(currentService.days) : currentService.days;
+            modalDays.textContent = '⏱ Примерный срок: ' + daysLabel(range);
+        }
+
+        function openModal(index) {
+            currentService = SERVICES[index];
+            modalTitle.textContent = currentService.name;
+            urgentToggle.checked = false;
+            commentBox.value = '';
+            renderOptions();
+            refreshOptions();
+            orderModal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            orderModal.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        servicesGrid.addEventListener('click', function(evt) {
+            const btn = evt.target.closest('.order-btn');
+            if (btn) openModal(parseInt(btn.dataset.index, 10));
+        });
+
+        document.getElementById('modal-close').addEventListener('click', closeModal);
+        document.getElementById('modal-backdrop').addEventListener('click', closeModal);
+        document.addEventListener('keydown', function(evt) { if (evt.key === 'Escape') closeModal(); });
+        urgentToggle.addEventListener('change', updateTotal);
+
+        /* ============ ORDER VIA TELEGRAM ============ */
+        const toast = document.getElementById('toast');
+        let toastTimer = null;
+
+        function showToast() {
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(function() { toast.classList.remove('show'); }, 3500);
+        }
+
+        document.getElementById('modal-order').addEventListener('click', function() {
+            if (!currentService) return;
+            const chosen = [];
+            optionsList.querySelectorAll('.opt-input').forEach(function(inp) {
+                if (inp.checked) chosen.push(currentService.options[parseInt(inp.dataset.opt, 10)]);
+            });
+            const range = urgentToggle.checked ? urgentDays(currentService.days) : currentService.days;
+
+            let message = 'Здравствуйте! Хочу заказать: ' + currentService.name + '.\n\n⚙️ Состав заказа:\n';
+            chosen.forEach(function(opt) {
+                message += '— ' + opt.title + ' (+' + formatRub(opt.price) + ')\n';
+            });
+            message += '⚡ Срочное выполнение: ' + (urgentToggle.checked ? 'да (+50%)' : 'нет') + '\n';
+            message += '💰 Итого: ' + formatRub(calcTotal()) + '\n';
+            message += '⏱ Срок: ' + daysLabel(range);
+            const commentText = commentBox.value.trim();
+            if (commentText) message += '\n📝 Комментарий: ' + commentText;
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(message).then(showToast).catch(showToast);
+            } else {
+                showToast();
+            }
+            window.open(TG_LINK, '_blank');
+            closeModal();
+        });
+
+        /* ============ FAQ ACCORDION ============ */
+        document.querySelectorAll('.faq-toggle').forEach(function(toggleBtn) {
+            toggleBtn.addEventListener('click', function() {
+                const item = toggleBtn.closest('.faq-item');
+                const wasOpen = item.classList.contains('open');
+                document.querySelectorAll('.faq-item.open').forEach(function(openItem) {
+                    openItem.classList.remove('open');
+                });
+                if (!wasOpen) item.classList.add('open');
+            });
+        });
+
+        /* ============ FALLING PETALS ============ */
+        function createPetals() {
+            const petalsContainer = document.getElementById('petals-container');
+            const petalCount = 15;
+            for (let petalIndex = 0; petalIndex < petalCount; petalIndex++) {
+                const petalEl = document.createElement('div');
+                petalEl.className = 'petal';
+                petalEl.style.left = Math.random() * 100 + '%';
+                petalEl.style.animationDuration = (Math.random() * 8 + 6) + 's';
+                petalEl.style.animationDelay = (Math.random() * 10) + 's';
+                petalEl.style.width = (Math.random() * 10 + 8) + 'px';
+                petalEl.style.height = (Math.random() * 10 + 8) + 'px';
+                petalEl.style.opacity = Math.random() * 0.4 + 0.1;
+                petalsContainer.appendChild(petalEl);
+            }
+        }
+        createPetals();
+
+        /* ============ SCROLL ANIMATIONS ============ */
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+        const scrollObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, observerOptions);
+        document.querySelectorAll('.fade-in').forEach(function(el) { scrollObserver.observe(el); });
+
+        /* ============ NAVBAR SCROLL EFFECT ============ */
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 100) {
+                navbar.classList.add('nav-blur', 'bg-dark/80');
+            } else {
+                navbar.classList.remove('nav-blur', 'bg-dark/80');
+            }
+        });
+
+        /* ============ MOBILE MENU ============ */
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuBtn.addEventListener('click', function() { mobileMenu.classList.toggle('hidden'); });
+        mobileMenu.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function() { mobileMenu.classList.add('hidden'); });
+        });
+
+        /* ============ SMOOTH SCROLL ============ */
+        document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+            anchor.addEventListener('click', function(evt) {
+                const targetEl = document.querySelector(this.getAttribute('href'));
+                if (targetEl) {
+                    evt.preventDefault();
+                    targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
